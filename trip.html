@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>알마티 · 카라콜 트레킹 — 2026.09.05–13</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#101728;
+    --bg2:#182238;
+    --card:#1C2740;
+    --card-hi:#233152;
+    --line:rgba(230,235,245,0.10);
+    --ink:#E9ECF4;
+    --ink-dim:#93A0BE;
+    --turquoise:#42B0A6;
+    --turquoise-dim:rgba(66,176,166,0.16);
+    --gold:#DBA84C;
+    --gold-dim:rgba(219,168,76,0.16);
+    --rose:#D07A5C;
+    --rose-dim:rgba(208,122,92,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans KR',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:64px;
+  }
+  .display{font-family:'Fraunces',serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    padding:38px 20px 0;
+    background:radial-gradient(120% 100% at 20% 0%, #1B2A46 0%, var(--bg) 60%);
+    overflow:hidden;
+  }
+  .hero-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--turquoise);
+    margin-bottom:10px;
+  }
+  .hero h1{
+    font-size:30px;
+    line-height:1.15;
+    margin:0 0 8px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .hero p.sub{
+    color:var(--ink-dim);
+    font-size:14.5px;
+    margin:0 0 22px;
+    line-height:1.6;
+  }
+  .hero p.sub b{color:var(--ink);font-weight:600;}
+
+  /* ---------- Ridge line ---------- */
+  .ridge-wrap{margin:0 -20px;padding:0 10px;overflow-x:auto;}
+  svg#ridge{display:block;min-width:900px;width:100%;height:150px;}
+  .ridge-peak circle{cursor:pointer;transition:r .15s ease;}
+  .ridge-peak.active circle.dot{fill:var(--gold);}
+  .ridge-peak:not(.active) circle.dot{fill:var(--turquoise);}
+  .ridge-peak text.day-label{font-family:'IBM Plex Mono',monospace;font-size:11px;fill:var(--ink-dim);}
+  .ridge-peak.active text.day-label{fill:var(--gold);font-weight:600;}
+  .ridge-peak text.elev-label{font-family:'IBM Plex Mono',monospace;font-size:9px;fill:#5C6B8C;}
+
+  /* ---------- Day chips ---------- */
+  .day-nav{display:flex;align-items:center;gap:8px;margin:6px -20px 0;padding:0 20px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .day-nav::-webkit-scrollbar{display:none;}
+  .day-chip{flex:0 0 auto;background:var(--card);border:1px solid var(--line);color:var(--ink-dim);font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500;padding:8px 13px;border-radius:100px;cursor:pointer;white-space:nowrap;}
+  .day-chip.active{background:var(--gold);border-color:var(--gold);color:#241705;font-weight:700;}
+  .day-arrow{flex:0 0 auto;background:var(--card-hi);border:1px solid var(--line);color:var(--ink);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+  .day-arrow:disabled{opacity:.3;cursor:default;}
+
+  /* ---------- Tabs ---------- */
+  .tabbar{position:sticky;top:0;z-index:20;display:flex;gap:2px;background:var(--bg);padding:14px 16px 10px;border-bottom:1px solid var(--line);}
+  .tab-btn{flex:1;background:transparent;border:none;color:var(--ink-dim);font-family:'IBM Plex Sans KR',sans-serif;font-size:13.5px;font-weight:500;padding:10px 6px;border-radius:10px;cursor:pointer;transition:all .15s ease;}
+  .tab-btn.active{background:var(--card-hi);color:var(--ink);font-weight:600;}
+
+  .panel{display:none;padding:20px 18px 10px;max-width:760px;margin:0 auto;}
+  .panel.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ---------- Schedule ---------- */
+  .day-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;}
+  .day-head h2{font-size:21px;margin:0;font-weight:600;}
+  .day-head .day-sub{font-size:12.5px;color:var(--ink-dim);font-family:'IBM Plex Mono',monospace;}
+
+  .action-row{display:flex;gap:8px;margin:14px 0 6px;flex-wrap:wrap;}
+  .pill-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--turquoise-dim);color:var(--turquoise);
+    font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:100px;
+    border:1px solid rgba(66,176,166,0.35);cursor:pointer;
+  }
+  .pill-btn.gold{background:var(--gold-dim);color:var(--gold);border-color:rgba(219,168,76,.4);}
+  .pill-btn .count{background:rgba(255,255,255,.18);border-radius:100px;padding:0 6px;font-size:11px;}
+
+  .map-embed-wrap{margin:14px 0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card);}
+  .map-embed-wrap iframe{width:100%;height:230px;border:0;display:block;}
+  .map-fallback{display:block;text-align:center;font-size:11.5px;color:var(--ink-dim);padding:8px;background:var(--card-hi);text-decoration:none;}
+
+  .notes-panel{display:none;margin:8px 0 18px;padding:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;}
+  .notes-panel.open{display:block;}
+  .notes-panel .empty-hint{padding:10px 0;}
+
+  .timeline{position:relative;padding-left:20px;border-left:1px solid var(--line);}
+  .titem{position:relative;margin-bottom:16px;padding-left:14px;}
+  .titem::before{content:'';position:absolute;left:-25px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--card);border:2px solid var(--turquoise);}
+  .titem .ttime{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold);margin-bottom:3px;display:block;outline:none;}
+  .titem .ttext{font-size:14.5px;line-height:1.55;outline:none;border-radius:6px;padding:2px 4px;margin-left:-4px;}
+  .titem .ttext:focus,.titem .ttime:focus{background:var(--card-hi);}
+  .titem .trow{display:flex;align-items:flex-start;gap:8px;}
+  .del-btn{background:none;border:none;color:#5C6B8C;font-size:16px;cursor:pointer;padding:0 4px;line-height:1.6;flex-shrink:0;}
+  .del-btn:hover{color:var(--rose);}
+  .flag{display:inline-block;font-size:10.5px;font-weight:600;background:var(--rose-dim);color:var(--rose);padding:1px 7px;border-radius:100px;margin-left:6px;vertical-align:2px;}
+  .add-line{display:flex;gap:8px;margin-top:10px;padding-left:14px;}
+  .add-line input{flex:1;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px 10px;font-size:13.5px;font-family:inherit;}
+  .add-line input.time-in{flex:0 0 80px;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+  .add-btn{background:var(--turquoise);color:#0B1622;border:none;border-radius:8px;font-size:13px;font-weight:700;padding:0 14px;cursor:pointer;}
+
+  /* ---------- Notes (reused inside schedule) ---------- */
+  .note-card{background:var(--card-hi);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;}
+  .note-card .ntitle{background:transparent;border:none;color:var(--gold);font-weight:600;font-size:13.5px;outline:none;width:100%;margin-bottom:5px;font-family:inherit;padding:2px;}
+  .note-card .nbody{background:transparent;border:none;color:var(--ink-dim);font-size:12.5px;line-height:1.6;outline:none;width:100%;resize:vertical;min-height:40px;font-family:inherit;padding:2px;}
+  .note-card .nbody:focus,.note-card .ntitle:focus{background:rgba(255,255,255,.04);border-radius:6px;}
+  .note-card-top{display:flex;justify-content:space-between;gap:6px;}
+  .add-note-btn{width:100%;background:transparent;color:var(--ink-dim);border:1px dashed var(--line);border-radius:10px;padding:9px;font-size:12.5px;cursor:pointer;margin-top:2px;}
+
+  /* ---------- Price tab (table) ---------- */
+  .rate-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:20px;}
+  .rate-card h3{margin:0 0 4px;font-size:15px;}
+  .rate-card .note{font-size:12px;color:var(--ink-dim);margin:0 0 14px;line-height:1.6;}
+  .rate-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .rate-row label{width:64px;font-size:13px;color:var(--ink-dim);font-family:'IBM Plex Mono',monospace;}
+  .rate-row input{flex:1;background:var(--bg2);border:1px solid var(--line);color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:14px;border-radius:8px;padding:8px 10px;}
+  .rate-row span.unit{font-size:12px;color:var(--ink-dim);width:70px;}
+  .rate-date{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);}
+  .rate-date input{background:var(--bg2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:7px 9px;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+
+  .price-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card);}
+  table.price-table{border-collapse:collapse;width:100%;min-width:640px;font-size:12.5px;}
+  table.price-table th{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--turquoise);text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  table.price-table td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  table.price-table tr:last-child td{border-bottom:none;}
+  table.price-table input,table.price-table select{
+    background:var(--bg2);border:1px solid var(--line);color:var(--ink);border-radius:6px;
+    padding:6px 7px;font-size:12px;font-family:'IBM Plex Mono',monospace;width:100%;
+  }
+  table.price-table input.name-in{font-family:'IBM Plex Sans KR',sans-serif;font-size:12.5px;min-width:150px;}
+  table.price-table td.amt-cell{display:flex;gap:4px;min-width:120px;}
+  table.price-table td.amt-cell input{flex:1 1 62%;}
+  table.price-table td.amt-cell select{flex:1 1 38%;}
+  table.price-table td.readonly-cell{font-family:'IBM Plex Mono',monospace;color:var(--ink-dim);white-space:nowrap;}
+  table.price-table td.readonly-cell.pp{color:var(--gold);font-weight:600;}
+  table.price-table tfoot td{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--ink);background:var(--card-hi);border-top:2px solid var(--line);border-bottom:none;}
+  table.price-table tfoot td.label{color:var(--ink-dim);font-weight:600;}
+
+  .add-price-btn{width:100%;background:var(--gold-dim);color:var(--gold);border:1px dashed rgba(219,168,76,.4);border-radius:12px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px;}
+  .price-hint{font-size:11.5px;color:#5C6B8C;line-height:1.6;margin-top:10px;}
+
+  /* ---------- Todo tab ---------- */
+  .todo-add{display:flex;gap:8px;margin-bottom:16px;}
+  .todo-add input{flex:1;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:11px 12px;font-size:14px;font-family:inherit;}
+  .todo-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 12px;margin-bottom:8px;}
+  .todo-item.done{opacity:.45;}
+  .todo-item.done .ttext2{text-decoration:line-through;}
+  .todo-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--turquoise);flex-shrink:0;cursor:pointer;background:transparent;position:relative;}
+  .todo-item.done .todo-check{background:var(--turquoise);}
+  .ttext2{flex:1;font-size:14px;outline:none;padding:2px;}
+  .empty-hint{color:var(--ink-dim);font-size:13px;text-align:center;padding:30px 0;}
+
+  .footnote{max-width:760px;margin:20px auto 0;padding:0 18px;font-size:11.5px;color:#5C6B8C;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">TRAIL LOG · KAZAKHSTAN &amp; KYRGYZSTAN</div>
+  <h1 class="display">알마티 · 카라콜 트레킹</h1>
+  <p class="sub"><b>2026.09.05(토) – 09.13(일)</b> · 인천 ⇄ 알마티 · 8박 9일<br>탭을 눌러 이동하고, 글자를 누르면 바로 수정할 수 있어요.</p>
+  <div class="ridge-wrap"><svg id="ridge" viewBox="0 0 900 150"></svg></div>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="schedule">일정표</button>
+  <button class="tab-btn" data-tab="price">가격</button>
+  <button class="tab-btn" data-tab="todo">할일</button>
+</div>
+
+<!-- ================= SCHEDULE ================= -->
+<div class="panel active" id="panel-schedule">
+  <div class="day-nav" id="day-nav">
+    <button class="day-arrow" id="day-prev">‹</button>
+    <div id="day-chips" style="display:flex;gap:8px;"></div>
+    <button class="day-arrow" id="day-next">›</button>
+  </div>
+  <div class="day-head" style="margin-top:14px;">
+    <h2 class="display" id="sch-title">9/5(토)</h2>
+    <span class="day-sub" id="sch-sub"></span>
+  </div>
+
+  <div class="action-row">
+    <button class="pill-btn" id="toggle-map">🗺️ 이 날 경로 지도</button>
+    <button class="pill-btn gold" id="toggle-notes">📝 참고사항 <span class="count" id="notes-count">0</span></button>
+  </div>
+
+  <div class="map-embed-wrap" id="map-wrap" style="display:none;">
+    <iframe id="map-frame" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <a class="map-fallback" id="map-fallback-link" href="#" target="_blank" rel="noopener">지도가 안 보이면 여기를 눌러 새 창에서 크게 보기 ↗</a>
+  </div>
+
+  <div class="notes-panel" id="notes-panel">
+    <div id="notes-for-day"></div>
+    <button class="add-note-btn" id="add-note-for-day">+ 이 날짜에 참고사항 추가</button>
+  </div>
+
+  <div class="timeline" id="sch-timeline"></div>
+  <div class="add-line">
+    <input type="text" class="time-in" id="new-time" placeholder="시간">
+    <input type="text" id="new-text" placeholder="새 일정 내용 추가">
+    <button class="add-btn" id="new-add">+</button>
+  </div>
+</div>
+
+<!-- ================= PRICE ================= -->
+<div class="panel" id="panel-price">
+  <div class="rate-card">
+    <h3>환율 설정</h3>
+    <p class="note">아티팩트는 외부 API를 실시간으로 불러올 수 없어서, 자동으로 매번 갱신되지는 않아요. 아래 값을 접속일 기준 환율로 직접 업데이트하면 모든 가격이 즉시 다시 계산돼요. (기준일: <span id="rate-basis"></span> 검색값)</p>
+    <div class="rate-row"><label>USD</label><input type="number" id="rate-usd" step="0.1"><span class="unit">원 / $1</span></div>
+    <div class="rate-row"><label>KZT</label><input type="number" id="rate-kzt" step="0.01"><span class="unit">원 / ₸1</span></div>
+    <div class="rate-row"><label>KGS(솜)</label><input type="number" id="rate-kgs" step="0.01"><span class="unit">원 / 1솜</span></div>
+    <div class="rate-date">
+      <span style="font-size:12px;color:var(--ink-dim);">적용 기준일</span>
+      <input type="date" id="rate-date-input">
+    </div>
+  </div>
+
+  <div class="price-table-wrap">
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>이름</th>
+          <th>가격</th>
+          <th>원화가격</th>
+          <th>참여인원</th>
+          <th>인당 부담금액</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="price-tbody"></tbody>
+      <tfoot id="price-tfoot"></tfoot>
+    </table>
+  </div>
+  <button class="add-price-btn" id="add-price-item">+ 항목 추가</button>
+  <p class="price-hint">※ '가격' 열은 통화가 서로 달라 합계를 낼 수 없어 표시하지 않아요. '참여인원'·'인당 부담금액' 합계는 항목을 단순히 더한 값이라, 같은 사람이 여러 투어에 겹쳐 참여해도 그대로 더해져요 — 참고용으로만 봐주세요.</p>
+</div>
+
+<!-- ================= TODO ================= -->
+<div class="panel" id="panel-todo">
+  <div class="todo-add">
+    <input type="text" id="todo-input" placeholder="할 일 추가 (예: 여행자보험 신청)">
+    <button class="add-btn" id="todo-add-btn">추가</button>
+  </div>
+  <div id="todo-list"></div>
+</div>
+
+<p class="footnote">이 페이지의 일정·가격·할일 수정 내용은 링크를 여는 모든 사람에게 공유돼요. 다 함께 실시간으로 채워나가는 여행 노트라고 생각하면 돼요.</p>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'almaty-karakol-trip-2026-v2';
+
+  function defaultState(){
+    return {
+      rates:{ usd:1385, kzt:3.05, kgs:16.5, basisDate: new Date().toISOString().slice(0,10) },
+      days:[
+        {id:'0905', label:'9/5(토)', elev:800,
+          stops:['Incheon International Airport','Almaty International Airport','Seyfulin Avenue 416, Almaty'],
+          items:[
+            {time:'19:25', text:'인천공항 출발'},
+            {time:'22:40', text:'알마티 T2 도착'},
+            {time:'24:00', text:'숙소 도착 (Seyfulin Avenue 416)'}
+          ]},
+        {id:'0906', label:'9/6(일)', elev:2511,
+          stops:['Seyfulin Avenue 416, Almaty','Big Almaty Lake','Seyfulin Avenue 416, Almaty'],
+          items:[
+            {time:'09:00–10:00', text:'빅알마티로 이동'},
+            {time:'10:00–12:30', text:'등산 (파이프라인 코스)'},
+            {time:'12:30–14:00', text:'빅알마티 관람'},
+            {time:'14:00–16:00', text:'하산 (완만한 코스)'},
+            {time:'16:00–17:00', text:'숙소 복귀'}
+          ]},
+        {id:'0907', label:'9/7(월)', elev:1900,
+          stops:['Seyfulin Avenue 416, Almaty','Charyn Canyon','Kolsai Lakes','Kaindy Lake','Saty village, Kazakhstan','Kegen border crossing','Karakol, Kyrgyzstan'],
+          items:[
+            {time:'03:00', text:'알마티에서 출발 <span class="flag">집결지 2곳: Seyfulin 416 / Furmanov 28</span>'},
+            {time:'05:45–07:45', text:'차른 캐년'},
+            {time:'07:45', text:'콜사이로 출발'},
+            {time:'09:25–10:25', text:'콜사이 호수'},
+            {time:'10:25', text:'카인디 호수로 출발'},
+            {time:'10:45–13:15', text:'카인디 호수 <span class="flag">주차장~호수 이동비 별도</span>'},
+            {time:'13:15–13:55', text:'사티마을에서 점심'},
+            {time:'13:55–14:15', text:'준비 후 케겐 국경으로 출발'},
+            {time:'16:00', text:'케겐 국경 도착 <span class="flag">17시 마감 주의</span>'},
+            {time:'18:30', text:'숙소 도착 (Snow Leopard Hostel)'}
+          ]},
+        {id:'0908', label:'9/8(화)', elev:2600,
+          stops:['Karakol, Kyrgyzstan','Ak-Suu hot springs, Kyrgyzstan','Altyn Arashan, Kyrgyzstan'],
+          items:[
+            {time:'09:00–09:30', text:'악수온천 이동'},
+            {time:'09:30–11:00', text:'온천'},
+            {time:'11:00–11:30', text:'이동 준비'},
+            {time:'11:30–16:30', text:'알틴 아라샨 트레킹 (14~15km)'},
+            {time:'16:30–17:00', text:'엘자 게스트하우스 체크인'},
+            {time:'17:00–', text:'저녁식사 후 정비 <span class="flag">종료 시간 미정</span>'}
+          ]},
+        {id:'0909', label:'9/9(수)', elev:3860,
+          stops:['Altyn Arashan, Kyrgyzstan','Ala-Kul Pass, Kyrgyzstan','Altyn Arashan, Kyrgyzstan','Karakol, Kyrgyzstan'],
+          items:[
+            {time:'08:00–09:00', text:'조식 및 정비'},
+            {time:'09:00–12:30', text:'상행 승마 트레킹 (알틴아라샨 → 알라쿨 패스)'},
+            {time:'12:30–13:30', text:'알라쿨 패스 정상 관람 및 점심'},
+            {time:'13:30–16:30', text:'하행 승마 트레킹 (알라쿨 패스 → 알틴아라샨)'},
+            {time:'16:30–17:00', text:'게스트하우스 도착, 푸르공 탑승 준비'},
+            {time:'17:00–19:00', text:'푸르공 하산 (알틴아라샨 → 카라콜 시내 숙소)'}
+          ]},
+        {id:'0910', label:'9/10(목)', elev:1600,
+          stops:['Karakol, Kyrgyzstan','Issyk-Kul Lake, Kyrgyzstan','Karakol, Kyrgyzstan','Kegen border crossing','Seyfulin Avenue 416, Almaty'],
+          items:[
+            {time:'09:00–09:30', text:'호스텔 출발, 이식쿨 호수로 이동'},
+            {time:'09:30–11:00', text:'이식쿨 호수 수영 및 휴식'},
+            {time:'11:00–11:30', text:'Snow Leopard Hostel 복귀'},
+            {time:'11:30–12:30', text:'샤워, 짐 정리 및 체크아웃'},
+            {time:'12:30–13:30', text:'점심 식사'},
+            {time:'13:30–15:30', text:'카라콜 → 케겐 국경 이동'},
+            {time:'15:30–16:30', text:'케겐 국경 출입국 심사'},
+            {time:'16:30–20:30', text:'케겐 국경 → 알마티 시내 복귀'}
+          ]},
+        {id:'0911', label:'9/11(금)', elev:2200,
+          stops:['Seyfulin Avenue 416, Almaty','Ayu Waterfall parking, Kazakhstan','Asy Plateau, Kazakhstan','Seyfulin Avenue 416, Almaty'],
+          items:[
+            {time:'10:00–10:20', text:'알마티 출발'},
+            {time:'10:20–10:50', text:'상점 들르기 및 정비 <span class="flag">장소 미정</span>'},
+            {time:'10:50–12:10', text:'아유 폭포 주차장으로 이동'},
+            {time:'12:10–13:30', text:'아유 폭포 하이킹 및 점심'},
+            {time:'13:30–14:40', text:'아씨 고원으로 이동'},
+            {time:'14:40–18:30', text:'아씨 고원 탐방 및 휴식'},
+            {time:'18:30–19:30', text:'아씨 고원 일몰 감상'},
+            {time:'19:30–22:00', text:'알마티 시내 복귀'}
+          ]},
+        {id:'0912', label:'9/12(토)', elev:3200,
+          stops:['Seyfulin Avenue 416, Almaty','Shymbulak','Almaty city center','Green Bazaar, Almaty','Almaty International Airport'],
+          items:[
+            {time:'09:00–09:30', text:'숙소 체크아웃 및 이동'},
+            {time:'09:30–10:00', text:'캐리어 보관 (Boxroom)'},
+            {time:'10:00–10:40', text:'침볼락 이동'},
+            {time:'10:40–13:30', text:'침볼락 관광 및 점심 식사'},
+            {time:'13:30–14:30', text:'하산 및 시내 이동'},
+            {time:'14:30–16:30', text:'시내 명소 탐방 <span class="flag">장소 미정</span>'},
+            {time:'16:30–18:00', text:'그린 바자르 구경'},
+            {time:'18:00–19:30', text:'저녁 식사'},
+            {time:'19:30–20:10', text:'짐 수령'},
+            {time:'20:10–21:00', text:'알마티 국제공항 이동'},
+            {time:'21:00–21:40', text:'공항 도착 및 출국 수속'},
+            {time:'23:40', text:'알마티 T2 출발'}
+          ]},
+        {id:'0913', label:'9/13(일)', elev:800,
+          stops:['Almaty International Airport','Incheon International Airport'],
+          items:[
+            {time:'10:15', text:'인천공항 T1 도착'}
+          ]}
+      ],
+      prices:[
+        {label:'인천 ⇄ 알마티 왕복 항공권', amount:1520400, currency:'KRW', participants:2},
+        {label:'숙박 9/5–9/7 · Seyfulin Avenue 416', amount:96, currency:'USD', participants:2},
+        {label:'숙박 9/7–9/8 · Snow Leopard Hostel (Twin)', amount:55, currency:'USD', participants:2},
+        {label:'숙박 9/8–9/9 · Elza Guesthouse (더블룸)', amount:7000, currency:'KGS', participants:2},
+        {label:'숙박 9/9–9/10 · Snow Leopard Hostel', amount:50, currency:'USD', participants:2},
+        {label:'숙박 9/10–9/12 · Seyfulin Avenue 416', amount:114, currency:'USD', participants:2},
+        {label:'투어 9/6 · 빅알마티 왕복 택시', amount:30000, currency:'KRW', participants:2},
+        {label:'투어 9/6 · 국립공원 입장료(1인당, 평균값)', amount:1600, currency:'KZT', participants:1},
+        {label:'투어 9/7 · 알마티→카라콜 (2호수 1캐년)', amount:495, currency:'USD', participants:5},
+        {label:'투어 9/9 · 알라쿨 패스 승마', amount:13500, currency:'KGS', participants:4},
+        {label:'투어 9/9 · 푸르공 하산', amount:10000, currency:'KGS', participants:5},
+        {label:'투어 9/10 · 카라콜 → 알마티 복귀', amount:280, currency:'USD', participants:5},
+        {label:'투어 9/11 · 아씨 고원', amount:100000, currency:'KZT', participants:6}
+      ],
+      notes:[
+        {title:'짐 보관 (Boxroom)', body:'9/12 숙소 체크아웃 후, 저녁 비행 전까지 짐을 맡길 수 있는 사이트(Boxroom)를 안내받았어요. 위치·요금 확인 필요.', days:['0912']},
+        {title:'9/7 집결지 안내', body:'알마티→카라콜 투어 집결지가 두 곳이에요.\n· Seyfulin Avenue 416, Pulse Capsule Hotel 사이 — 지수, 연수, 나래\n· Furmanov Ave 28 — 희선, 정혁', days:['0907']},
+        {title:'케겐(Kegen) 국경', body:'오후 5시에 문을 닫아요. 국경 통과 시간을 꼭 지켜야 해요.', days:['0907','0910']},
+        {title:'알마티→카라콜 투어 포함/불포함', body:'포함: 미니밴+기사+기름값, 기사 식사/숙박비 및 국경 경비, 국립공원 입장료(차른·콜사이·카인디), 이동 중 화장실/식사 정차 지원.\n불포함: 개인 식사·음료비, 전문 가이드/통역(기사님은 기초 영어/번역 앱), 카인디 호수 주차장↔호수 이동비(에코택시/승마 별도).', days:['0907']},
+        {title:'승마 비용 구성', body:'2,500솜 × 4명 + 말 관리인 비용 3,500솜 = 13,500솜(4명 기준).', days:['0909']},
+        {title:'아씨 고원 투어 포함사항', body:'프라이빗 오프로드 차량, 운전기사 겸 가이드, 국립공원 입장료, 아유 폭포 1시간 선택 하이킹, 피크닉 테이블&의자, 가스버너. 최대 6명까지 한 대로 이용 가능하고 일몰까지 체류 시간 제한이 없어요.', days:['0911']}
+      ],
+      todos:[
+        {text:'카자흐스탄 ETA 알아보기', done:false},
+        {text:'유심 신청', done:false},
+        {text:'보험 신청', done:false}
+      ]
+    };
+  }
+
+  let state = null;
+  let selectedDay = 0;
+  let mapOpen = false;
+  let notesOpen = false;
+
+  function mapExternalUrl(stops){
+    return 'https://www.google.com/maps/dir/' + stops.map(s=>encodeURIComponent(s)).join('/');
+  }
+  function mapEmbedUrl(stops){
+    if(stops.length < 2) return '';
+    const origin = encodeURIComponent(stops[0]).replace(/%20/g,'+');
+    const rest = stops.slice(1).map(s=>encodeURIComponent(s).replace(/%20/g,'+')).join('+to:');
+    return 'https://maps.google.com/maps?saddr=' + origin + '&daddr=' + rest + '&output=embed';
+  }
+
+  let saveTimer=null;
+  function scheduleSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(save, 400); }
+  async function save(){
+    try{ await window.storage.set(STORAGE_KEY, JSON.stringify(state), true); }
+    catch(e){ console.error('save failed', e); }
+  }
+  async function load(){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, true);
+      if(res && res.value){ state = JSON.parse(res.value); return; }
+    }catch(e){ /* not found */ }
+    state = defaultState();
+    await save();
+  }
+
+  function escapeAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+  /* ---------------- ridge ---------------- */
+  function renderRidge(){
+    const svg = document.getElementById('ridge');
+    const days = state.days;
+    const n = days.length;
+    const padX = 40, w = 900, baseline=118, topPad=18;
+    const maxE = 4200, minE = 400;
+    const pts = days.map((d,i)=>{
+      const x = padX + i*((w-2*padX)/(n-1));
+      const t = (d.elev-minE)/(maxE-minE);
+      const y = baseline - t*(baseline-topPad);
+      return {x,y,d,i};
+    });
+    let path = 'M ' + padX + ' ' + baseline + ' ';
+    pts.forEach(p=> path += 'L ' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) + ' ');
+    path += 'L ' + (w-padX) + ' ' + baseline;
+
+    let svgHTML = `
+      <defs>
+        <linearGradient id="ridgeFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#42B0A6" stop-opacity="0.28"/>
+          <stop offset="100%" stop-color="#42B0A6" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="${path} Z" fill="url(#ridgeFill)"/>
+      <path d="${path}" fill="none" stroke="#3A4A6B" stroke-width="1.5"/>
+    `;
+    pts.forEach(p=>{
+      const active = p.i===selectedDay;
+      svgHTML += `
+        <g class="ridge-peak ${active?'active':''}" data-idx="${p.i}">
+          <circle class="dot" cx="${p.x}" cy="${p.y}" r="${active?6:4}"/>
+          <text class="elev-label" x="${p.x}" y="${p.y-10}" text-anchor="middle">${p.d.elev}m</text>
+          <text class="day-label" x="${p.x}" y="${baseline+20}" text-anchor="middle">${p.d.label.split('(')[0]}</text>
+          <rect x="${p.x-16}" y="${p.y-16}" width="32" height="${baseline-p.y+36}" fill="transparent"/>
+        </g>`;
+    });
+    svg.innerHTML = svgHTML;
+    svg.querySelectorAll('.ridge-peak').forEach(g=>{
+      g.addEventListener('click', ()=>selectDay(parseInt(g.dataset.idx,10)));
+    });
+  }
+
+  function selectDay(i){
+    selectedDay = i;
+    mapOpen = false; notesOpen = false;
+    renderSchedule(); renderRidge(); renderDayChips();
+  }
+
+  function renderDayChips(){
+    const wrap = document.getElementById('day-chips');
+    wrap.innerHTML = '';
+    state.days.forEach((d,i)=>{
+      const b = document.createElement('button');
+      b.className = 'day-chip' + (i===selectedDay?' active':'');
+      b.textContent = d.label;
+      b.addEventListener('click', ()=>selectDay(i));
+      wrap.appendChild(b);
+    });
+    document.getElementById('day-prev').disabled = selectedDay===0;
+    document.getElementById('day-next').disabled = selectedDay===state.days.length-1;
+    const activeChip = wrap.children[selectedDay];
+    if(activeChip) activeChip.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+  }
+  document.getElementById('day-prev').addEventListener('click', ()=>{ if(selectedDay>0) selectDay(selectedDay-1); });
+  document.getElementById('day-next').addEventListener('click', ()=>{ if(selectedDay<state.days.length-1) selectDay(selectedDay+1); });
+
+  /* ---------------- schedule ---------------- */
+  function renderSchedule(){
+    const day = state.days[selectedDay];
+    document.getElementById('sch-title').textContent = day.label;
+    document.getElementById('sch-sub').textContent = day.elev + 'm 지점 포함';
+
+    // map
+    document.getElementById('map-wrap').style.display = mapOpen ? 'block' : 'none';
+    if(mapOpen){
+      document.getElementById('map-frame').src = mapEmbedUrl(day.stops);
+      document.getElementById('map-fallback-link').href = mapExternalUrl(day.stops);
+    }
+
+    // notes count + panel
+    const dayNotes = state.notes.filter(n => (n.days||[]).includes(day.id));
+    document.getElementById('notes-count').textContent = dayNotes.length;
+    document.getElementById('notes-panel').classList.toggle('open', notesOpen);
+    if(notesOpen) renderNotesForDay(day.id);
+
+    const tl = document.getElementById('sch-timeline');
+    tl.innerHTML = '';
+    day.items.forEach((item, idx)=>{
+      const el = document.createElement('div');
+      el.className = 'titem';
+      el.innerHTML = `
+        <span class="ttime mono" contenteditable="true">${escapeAttr(item.time)}</span>
+        <div class="trow">
+          <div class="ttext" contenteditable="true">${item.text}</div>
+          <button class="del-btn" title="삭제">✕</button>
+        </div>`;
+      const textEl = el.querySelector('.ttext');
+      textEl.addEventListener('input', ()=>{ item.text = textEl.innerHTML; scheduleSave(); });
+      const timeEl = el.querySelector('.ttime');
+      timeEl.addEventListener('input', ()=>{ item.time = timeEl.textContent; scheduleSave(); });
+      el.querySelector('.del-btn').addEventListener('click', ()=>{
+        day.items.splice(idx,1); renderSchedule(); scheduleSave();
+      });
+      tl.appendChild(el);
+    });
+  }
+
+  document.getElementById('toggle-map').addEventListener('click', ()=>{
+    mapOpen = !mapOpen; renderSchedule();
+  });
+  document.getElementById('toggle-notes').addEventListener('click', ()=>{
+    notesOpen = !notesOpen; renderSchedule();
+  });
+
+  function renderNotesForDay(dayId){
+    const wrap = document.getElementById('notes-for-day');
+    const list = state.notes.filter(n => (n.days||[]).includes(dayId));
+    wrap.innerHTML = '';
+    if(list.length===0){
+      wrap.innerHTML = '<div class="empty-hint" style="padding:6px 0;">아직 이 날짜에 등록된 참고사항이 없어요.</div>';
+    }
+    list.forEach((n)=>{
+      const globalIdx = state.notes.indexOf(n);
+      const el = document.createElement('div');
+      el.className = 'note-card';
+      el.innerHTML = `
+        <div class="note-card-top">
+          <input class="ntitle" value="${escapeAttr(n.title)}">
+          <button class="del-btn">✕</button>
+        </div>
+        <textarea class="nbody" rows="2">${n.body}</textarea>`;
+      el.querySelector('.ntitle').addEventListener('input', e=>{ n.title=e.target.value; scheduleSave(); });
+      el.querySelector('.nbody').addEventListener('input', e=>{ n.body=e.target.value; scheduleSave(); });
+      el.querySelector('.del-btn').addEventListener('click', ()=>{
+        state.notes.splice(globalIdx,1); renderNotesForDay(dayId); renderSchedule(); scheduleSave();
+      });
+      wrap.appendChild(el);
+    });
+  }
+  document.getElementById('add-note-for-day').addEventListener('click', ()=>{
+    const day = state.days[selectedDay];
+    state.notes.push({title:'새 참고사항', body:'', days:[day.id]});
+    renderNotesForDay(day.id); renderSchedule(); scheduleSave();
+  });
+
+  document.getElementById('new-add').addEventListener('click', ()=>{
+    const t = document.getElementById('new-time');
+    const x = document.getElementById('new-text');
+    if(!x.value.trim()) return;
+    state.days[selectedDay].items.push({time:t.value||'', text:x.value});
+    t.value=''; x.value='';
+    renderSchedule(); scheduleSave();
+  });
+
+  /* ---------------- price table ---------------- */
+  function rateFor(cur){
+    if(cur==='KRW') return 1;
+    if(cur==='USD') return state.rates.usd;
+    if(cur==='KZT') return state.rates.kzt;
+    if(cur==='KGS') return state.rates.kgs;
+    return 1;
+  }
+  const fmt = n => Math.round(n).toLocaleString('ko-KR');
+
+  function renderRateInputs(){
+    document.getElementById('rate-usd').value = state.rates.usd;
+    document.getElementById('rate-kzt').value = state.rates.kzt;
+    document.getElementById('rate-kgs').value = state.rates.kgs;
+    document.getElementById('rate-date-input').value = state.rates.basisDate;
+    document.getElementById('rate-basis').textContent = state.rates.basisDate;
+  }
+  ['usd','kzt','kgs'].forEach(k=>{
+    document.getElementById('rate-'+k).addEventListener('input', e=>{
+      state.rates[k] = parseFloat(e.target.value)||0;
+      renderPrices(); scheduleSave();
+    });
+  });
+  document.getElementById('rate-date-input').addEventListener('input', e=>{
+    state.rates.basisDate = e.target.value;
+    document.getElementById('rate-basis').textContent = e.target.value;
+    scheduleSave();
+  });
+
+  function renderPrices(){
+    const tbody = document.getElementById('price-tbody');
+    tbody.innerHTML = '';
+    let totalKRW = 0, totalPP = 0, totalParticipants = 0;
+    state.prices.forEach((p, idx)=>{
+      const krw = p.amount * rateFor(p.currency);
+      const pp = p.participants>0 ? krw/p.participants : krw;
+      totalKRW += krw; totalPP += pp; totalParticipants += (p.participants||0);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input class="name-in" value="${escapeAttr(p.label)}" data-f="label"></td>
+        <td class="amt-cell">
+          <input type="number" value="${p.amount}" data-f="amount">
+          <select data-f="currency">
+            ${['KRW','USD','KZT','KGS'].map(c=>`<option value="${c}" ${c===p.currency?'selected':''}>${c}</option>`).join('')}
+          </select>
+        </td>
+        <td class="readonly-cell">₩${fmt(krw)}</td>
+        <td><input type="number" min="1" value="${p.participants}" data-f="participants" style="width:60px;"></td>
+        <td class="readonly-cell pp">₩${fmt(pp)}</td>
+        <td><button class="del-btn">✕</button></td>
+      `;
+      tr.querySelectorAll('[data-f]').forEach(inp=>{
+        const field = inp.dataset.f;
+        const ev = (inp.tagName==='SELECT') ? 'change' : 'input';
+        inp.addEventListener(ev, ()=>{
+          let v = inp.value;
+          if(field==='amount' || field==='participants') v = parseFloat(v)||0;
+          state.prices[idx][field] = v;
+          renderPrices(); scheduleSave();
+        });
+      });
+      tr.querySelector('.del-btn').addEventListener('click', ()=>{
+        state.prices.splice(idx,1); renderPrices(); scheduleSave();
+      });
+      tbody.appendChild(tr);
+    });
+
+    const tfoot = document.getElementById('price-tfoot');
+    tfoot.innerHTML = `
+      <tr>
+        <td class="label">합계</td>
+        <td class="label">—</td>
+        <td>₩${fmt(totalKRW)}</td>
+        <td>${totalParticipants}</td>
+        <td>₩${fmt(totalPP)}</td>
+        <td></td>
+      </tr>`;
+  }
+
+  document.getElementById('add-price-item').addEventListener('click', ()=>{
+    state.prices.push({label:'새 항목', amount:0, currency:'KRW', participants:1});
+    renderPrices(); scheduleSave();
+  });
+
+  /* ---------------- todo ---------------- */
+  function renderTodos(){
+    const wrap = document.getElementById('todo-list');
+    wrap.innerHTML = '';
+    if(state.todos.length===0){
+      wrap.innerHTML = '<div class="empty-hint">할 일이 없어요. 위에서 추가해보세요.</div>';
+      return;
+    }
+    state.todos.forEach((t, idx)=>{
+      const el = document.createElement('div');
+      el.className = 'todo-item' + (t.done?' done':'');
+      el.innerHTML = `
+        <button class="todo-check"></button>
+        <div class="ttext2" contenteditable="true">${escapeAttr(t.text)}</div>
+        <button class="del-btn">✕</button>`;
+      el.querySelector('.todo-check').addEventListener('click', ()=>{
+        t.done = !t.done; renderTodos(); scheduleSave();
+      });
+      const txt = el.querySelector('.ttext2');
+      txt.addEventListener('input', ()=>{ t.text = txt.textContent; scheduleSave(); });
+      el.querySelector('.del-btn').addEventListener('click', ()=>{
+        state.todos.splice(idx,1); renderTodos(); scheduleSave();
+      });
+      wrap.appendChild(el);
+    });
+  }
+  function addTodo(){
+    const inp = document.getElementById('todo-input');
+    if(!inp.value.trim()) return;
+    state.todos.push({text:inp.value.trim(), done:false});
+    inp.value='';
+    renderTodos(); scheduleSave();
+  }
+  document.getElementById('todo-add-btn').addEventListener('click', addTodo);
+  document.getElementById('todo-input').addEventListener('keydown', e=>{ if(e.key==='Enter') addTodo(); });
+
+  /* ---------------- tabs ---------------- */
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ---------------- init ---------------- */
+  (async function init(){
+    await load();
+    renderRidge();
+    renderSchedule();
+    renderDayChips();
+    renderRateInputs();
+    renderPrices();
+    renderTodos();
+  })();
+})();
+</script>
+</body>
+</html>
